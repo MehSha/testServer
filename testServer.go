@@ -6,6 +6,10 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	// "github.com/deliveryhero/basicdam"
+
+	_ "github.com/lib/pq"
 )
 
 type data struct {
@@ -37,5 +41,11 @@ func main() {
 	flag.Parse()
 	timeout = *timeoutPtr
 	http.HandleFunc("/", handler)
+
+	db := connectDB()
+	defer db.Close()
+
+	initUser(db)
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

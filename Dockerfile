@@ -3,14 +3,14 @@ FROM golang as builder
 RUN mkdir /build 
 ADD . /build 
 WORKDIR /build
-RUN go build -o testServer
+RUN go build
 
 
 #ACTUAL
-FROM ubuntu
+FROM debian
 
 #install k6
-RUN apt update && apt install -y gnupg2 ca-certificates vim curl etcd-client
+RUN apt update && apt install -y ca-certificates vim curl
 
 
 #add tini
@@ -20,8 +20,7 @@ RUN chmod +x /tini
 ENTRYPOINT ["/tini", "--"]
 
 #copy 
-RUN mkdir -p /mnt/perf/
-COPY --from=builder /build/testServer /usr/local/bin/testServer
-RUN chmod +x /usr/local/bin/testServer
+COPY --from=builder /build/ci_test /usr/local/bin/ci_test
+RUN chmod +x /usr/local/bin/ci_test
 
-CMD /usr/local/bin/testServer
+CMD /usr/local/bin/ci_test
