@@ -2,21 +2,30 @@ version: 2
 jobs:
   build:
     working_directory: /tmp/workspace
-    docker: # use the docker executor type; machine and macos executors are also supported
-     - image: golang # the primary container, where your job's commands are run
+    docker:
+     - image: circleci/golang
     steps:
-      - checkout # check out the code in the project directory
-      - run: go vet
-      - run: go build -o app
-      - persist_to_workspace:
-          root: /tmp/workspace
-          paths:
-            - .
+      - checkout
+      - setup_remote_docker
+      - run: docker build -t mehryaar/testserver -f /tmp/workspace/Dockerfile /tmp/workspace/
+
+  build_push:
+    working_directory: /tmp/workspace
+    docker:
+     - image: circleci/golang
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker build -t mehryaar/testserver -f /tmp/workspace/Dockerfile /tmp/workspace/
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run: docker push mehryaar/testserver
+  
   test:
     docker:
      - image: circleci/golang
     steps:
       - checkout
+      - run: go vet
       - setup_remote_docker
       - run:
           name: Install Docker Compose
@@ -31,45 +40,22 @@ jobs:
             docker-compose -f docker-compose.test.yml up --build -d
             docker-compose -f docker-compose.test.yml run app go test -tags integration -v
             docker-compose -f docker-compose.test.yml down
-  dockerize:
-    docker:
-     - image: circleci/golang
-    steps:
-      - attach_workspace:
-          at: /tmp/workspace
-      - setup_remote_docker
-      - run: ls -lah /tmp/workspace
-      - run: docker build -t mehryaar/testserver -f /tmp/workspace/Dockerfile /tmp/workspace/
-      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run: docker push mehryaar/testserver
-      - run: echo dockerized!
+ 
   report:
     docker: # use the docker executor type; machine and macos executors are also supported
-     - image: golang
+     - image: mehryaar/runner_sloc
     steps:
       - checkout
-      - setup_remote_docker
-      - run:
-          name: Install Docker client
-          command: |
-            set -x
-            VER="17.03.0-ce"
-            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
-            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-            mv /tmp/docker/* /usr/bin
-      - run: |
-            docker create -v /data --name data alpine:3.4 /bin/true
-            docker cp . data:/data
-            docker run --volumes-from data mehryaar/runner_sloc /go/bin/sloc /data
+      - run: /go/bin/sloc .
+
 workflows:
   version: 2
   all:
     jobs:
-    - build
-    - test
-    - dockerize:
-        context: tokens
-        requires:
-        - build
-        - test
+      - test
+      - report
+      - build_push:
+          context: tokens
+          requires:
+            - test
 
