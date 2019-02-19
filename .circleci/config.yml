@@ -8,7 +8,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker build -t mehryaar/testserver -f /tmp/workspace/Dockerfile /tmp/workspace/
-      - docker save mehryaar/testserver > testserver.tar
+      - run: docker save mehryaar/testserver > testserver.tar
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
