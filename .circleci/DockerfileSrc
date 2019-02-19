@@ -1,6 +1,6 @@
 FROM circleci/golang
 
-RUN mkdir /build 
+RUN sudo mkdir /build 
 ADD . /build 
 WORKDIR /build
 
