@@ -8,8 +8,6 @@ RUN go build
 
 #ACTUAL
 FROM alpine
-
-#install k6
 RUN apk update  && apk add -f ca-certificates
 
 
