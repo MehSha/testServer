@@ -1,5 +1,5 @@
 FROM src
 
-RUN sudo mkdir /build 
+RUN mkdir /build 
 ADD . /build 
 WORKDIR /build
