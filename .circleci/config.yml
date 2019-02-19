@@ -8,6 +8,23 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker build -t mehryaar/testserver -f /tmp/workspace/Dockerfile /tmp/workspace/
+      - docker save mehryaar/testserver > testserver.tar
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - testserver.tar
+  
+  push:
+    docker:
+     - image: circleci/golang
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run: docker load <  /tmp/workspace/testserver.tar
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run: docker push mehryaar/testserver
+    
 
   build_push:
     working_directory: /tmp/workspace
@@ -22,27 +39,21 @@ jobs:
   
   test:
     docker:
-     - image: circleci/golang
+     - image: foodora/golang
     steps:
       - checkout
       - run: go vet
       - setup_remote_docker
-      # - run:
-      #     name: Install Docker Compose
-      #     command: |
-      #       curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-      #       chmod +x ~/docker-compose
-      #       sudo mv ~/docker-compose /usr/local/bin/docker-compose
       - run:
           name: run tests
           command: |
-            set -x
+            set -e
             docker-compose -f docker-compose.test.yml up --build -d
             docker-compose -f docker-compose.test.yml run app go test -tags integration -v
             docker-compose -f docker-compose.test.yml down
  
   report:
-    docker: # use the docker executor type; machine and macos executors are also supported
+    docker:
      - image: mehryaar/runner_sloc
     steps:
       - checkout
@@ -54,8 +65,10 @@ workflows:
     jobs:
       - test
       - report
-      - build_push:
+      - build
+      - push:
           context: tokens
           requires:
             - test
+            - build
 

@@ -7,10 +7,10 @@ RUN go build
 
 
 #ACTUAL
-FROM debian
+FROM alpine
 
 #install k6
-RUN apt update && apt install -y ca-certificates vim curl
+RUN apk update  && apk add -f ca-certificates
 
 
 #add tini
