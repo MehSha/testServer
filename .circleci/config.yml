@@ -20,7 +20,7 @@ jobs:
       - save_cache:
           key: ci_test-{{ checksum "go.mod" }}
           paths:
-            - "/go/pkg/mod/"
+            - "$GOPATH/pkg/mod/"
   
   push:
     docker:
@@ -36,6 +36,9 @@ jobs:
   test:
     machine: true
     steps:
+      - run: sudo circleci-install golang 1.11.2
+      - run: sudo mkdir ~/gopath
+      - run: sudo export GOPATH=~/gopath
       - checkout
       - restore_cache:
          keys:
