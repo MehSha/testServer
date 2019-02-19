@@ -45,7 +45,7 @@ jobs:
       - run: go vet
       - setup_remote_docker
       - run: docker-compose -f .circleci/docker-compose.yml up -d
-      - run: go test -tags integration -v
+      - run: docker-compose -f .circleci/docker-compose.yml run src go test -tags integration -v
       - run: docker-compose -f .circleci/docker-compose.yml down
  
   report:

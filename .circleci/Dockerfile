@@ -1,5 +1,5 @@
-FROM alpine
-RUN apk update  && apk add -f ca-certificates
+FROM debian
+RUN apt update  && apt install -y ca-certificates
 
 
 #add tini
