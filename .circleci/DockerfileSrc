@@ -1,9 +1,12 @@
-FROM golang
-RUN apt update  && apt install -y ca-certificates
+FROM circleci/golang
 
 RUN mkdir /build 
 ADD . /build 
 WORKDIR /build
 
 #add deps
+RUN pwd
+RUN ls
+RUN echo $GOPATH
+RUN ls $GOPATH
 ADD /go/pkg/mod /go/pkg/mod
