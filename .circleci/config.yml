@@ -5,14 +5,22 @@ jobs:
     docker:
      - image: circleci/golang
     steps:
+      - restore_cache:
+         keys:
+           - ci_test-{{ checksum "go.mod" }}
       - checkout
+      - run: go build
       - setup_remote_docker
-      - run: docker build -t mehryaar/testserver -f /tmp/workspace/Dockerfile /tmp/workspace/
+      - run: docker build -t mehryaar/testserver -f /tmp/workspace/.circleci/Dockerfile /tmp/workspace/
       - run: docker save mehryaar/testserver > testserver.tar
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
             - testserver.tar
+      - save_cache:
+          key: ci_test-{{ checksum "go.mod" }}
+          paths:
+            - "/go/pkg/mod/"
   
   push:
     docker:
