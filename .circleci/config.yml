@@ -46,7 +46,7 @@ jobs:
       - setup_remote_docker
       - run: docker-compose -f .circleci/docker-compose.yml up -d
       - run: docker-compose -f .circleci/docker-compose.yml run src go test -tags integration -v
-      - run: docker-compose -f .circleci/docker-compose.yml down
+      # - run: docker-compose -f .circleci/docker-compose.yml down
  
   report:
     docker:
