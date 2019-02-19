@@ -46,9 +46,12 @@ jobs:
       - run: go vet
       - run: go test
       - run: go build
+      - run: cp -r /go/pkg/mod .
       - setup_remote_docker
-      - run: docker build -t app -f .circleci/Dockerfile .
-      - run: docker build -t src -f .circleci/DockerfileSrc .
+      - run: docker run -d --name src golang sleep infinity
+      - run: docker exec -d src mkdir -p /go/pkg
+      - run: docker cp /go/pkg/mod src:/go/pkg/mod
+      - run: docker commit src src
       - run: docker-compose -f .circleci/docker-compose.yml up -d
       - run: docker-compose -f .circleci/docker-compose.yml run src go test -tags integration -v
  
