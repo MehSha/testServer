@@ -45,6 +45,7 @@ jobs:
            - ci_test-{{ checksum "go.mod" }}
       - run: go vet
       - run: go test
+      - run: go build
       - setup_remote_docker
       - run: docker build -t circleci_app -f .circleci/Dockerfile .
       - run:
