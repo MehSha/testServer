@@ -39,9 +39,9 @@ jobs:
       - run: sudo circleci-install golang 1.11.2
       - run: sudo mkdir ~/gopath
       - checkout
-      - restore_cache:
-         keys:
-           - ci_test-{{ checksum "go.mod" }}
+      # - restore_cache:
+      #    keys:
+      #      - ci_test-{{ checksum "go.mod" }}
       - run: go build
       - run: go vet
       # - setup_remote_docker
