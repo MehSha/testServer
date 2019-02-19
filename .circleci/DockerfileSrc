@@ -1,4 +1,4 @@
-FROM src
+FROM src-img
 
 RUN mkdir /build 
 ADD . /build 
