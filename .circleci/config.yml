@@ -28,8 +28,6 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - go test
-      - go build
       - setup_remote_docker
       - run: docker load <  /tmp/workspace/testserver.tar
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
@@ -48,10 +46,10 @@ jobs:
       - run: go build
       - run: cp -r /go/pkg/mod .
       - setup_remote_docker
-      - run: docker run -d --name src golang sleep infinity
-      - run: docker exec -d src mkdir -p /go/pkg
-      - run: docker cp /go/pkg/mod src:/go/pkg/mod
-      - run: docker commit src src-img
+      - run: docker run -d --name src-data golang sleep infinity
+      - run: docker exec -d src-data mkdir -p /go/pkg
+      - run: docker cp /go/pkg/mod src-data:/go/pkg/mod
+      - run: docker commit src-data src-img
       - run: docker-compose -f .circleci/docker-compose.yml up -d
       - run: docker-compose -f .circleci/docker-compose.yml run src go test -tags integration -v
  
