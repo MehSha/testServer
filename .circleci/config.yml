@@ -5,10 +5,10 @@ jobs:
     docker:
      - image: circleci/golang
     steps:
+      - checkout
       - restore_cache:
          keys:
            - ci_test-{{ checksum "go.mod" }}
-      - checkout
       - run: go build
       - setup_remote_docker
       - run: docker build -t mehryaar/testserver -f /tmp/workspace/.circleci/Dockerfile /tmp/workspace/
@@ -28,20 +28,10 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/workspace
+      - go test
+      - go build
       - setup_remote_docker
       - run: docker load <  /tmp/workspace/testserver.tar
-      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run: docker push mehryaar/testserver
-    
-
-  build_push:
-    working_directory: /tmp/workspace
-    docker:
-     - image: circleci/golang
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run: docker build -t mehryaar/testserver -f /tmp/workspace/Dockerfile /tmp/workspace/
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: docker push mehryaar/testserver
   
@@ -50,13 +40,18 @@ jobs:
      - image: foodora/golang
     steps:
       - checkout
+      - restore_cache:
+         keys:
+           - ci_test-{{ checksum "go.mod" }}
       - run: go vet
+      - run: go test
       - setup_remote_docker
+      - run: docker build -t circleci_app -f .circleci/Dockerfile .
       - run:
           name: run tests
           command: |
             set -e
-            docker-compose -f docker-compose.test.yml up --build -d
+            docker-compose -f docker-compose.test.yml up -d
             docker-compose -f docker-compose.test.yml run app go test -tags integration -v
             docker-compose -f docker-compose.test.yml down
  
