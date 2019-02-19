@@ -9,4 +9,5 @@ RUN pwd
 RUN ls
 RUN echo $GOPATH
 RUN ls $GOPATH
-ADD /go/pkg/mod /go/pkg/mod
+RUN mkdir -p /go/pkg/
+ADD mod /go/pkg/
