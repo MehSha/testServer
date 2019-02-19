@@ -1,0 +1,12 @@
+FROM circleci/golang
+
+RUN sudo mkdir /build 
+ADD . /build 
+WORKDIR /build
+
+#add deps
+RUN pwd
+RUN ls
+RUN echo $GOPATH
+RUN ls $GOPATH
+ADD /go/pkg/mod /go/pkg/mod
