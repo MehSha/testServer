@@ -47,7 +47,8 @@ jobs:
       - run: go test
       - run: go build
       - setup_remote_docker
-      - run: docker build -t project_app -f .circleci/Dockerfile .
+      - run: docker build -t app -f .circleci/Dockerfile .
+      - run: docker build -t src -f .circleci/DockerfileSrc .
       - run: docker-compose -f .circleci/docker-compose.yml up -d
       - run: docker-compose -f .circleci/docker-compose.yml run src go test -tags integration -v
  
