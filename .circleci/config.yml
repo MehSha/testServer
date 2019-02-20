@@ -46,8 +46,8 @@ jobs:
       - run: go build
       - setup_remote_docker
       - run:
-        name: build source image to run tests from
-        command: |
+          name: build source image to run tests from
+          command: |
             docker run -d --name src-data golang sleep infinity
             docker exec -d src-data mkdir -p /go/pkg /build
             docker cp . src-data:/build
