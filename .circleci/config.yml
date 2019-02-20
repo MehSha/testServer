@@ -44,12 +44,16 @@ jobs:
       - run: go vet
       - run: go test
       - run: go build
-      - run: cp -r /go/pkg/mod .
       - setup_remote_docker
-      - run: docker run -d --name src-data golang sleep infinity
-      - run: docker exec -d src-data mkdir -p /go/pkg
-      - run: docker cp /go/pkg/mod src-data:/go/pkg/mod
-      - run: docker commit src-data src-img
+      - run:
+        name: build source image to run tests from
+        command: |
+            docker run -d --name src-data golang sleep infinity
+            docker exec -d src-data mkdir -p /go/pkg /build
+            docker cp . src-data:/build
+            cp -r /go/pkg/mod .
+            docker cp /go/pkg/mod src-data:/go/pkg/mod
+            docker commit src-data src-img
       - run: docker-compose -f .circleci/docker-compose.yml up -d
       - run: docker-compose -f .circleci/docker-compose.yml run src go test -tags integration -v
  

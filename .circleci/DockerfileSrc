@@ -1,5 +1,0 @@
-FROM src-img
-
-RUN mkdir /build 
-ADD . /build 
-WORKDIR /build

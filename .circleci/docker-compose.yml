@@ -22,9 +22,7 @@ services:
     depends_on:
       - db
   src:
-    build:
-      context: ../
-      dockerfile: .circleci/DockerfileSrc
+    image: src-img
     environment:
       POSTGRES_HOST: db
       POSTGRES_DB: test
