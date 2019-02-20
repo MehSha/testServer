@@ -50,13 +50,13 @@ jobs:
           command: |
             set -x
             docker run -d --name src-data golang sleep infinity
-            docker exec -d src-data mkdir -p /go/pkg
-            docker cp . src-data:/go
+            docker exec -d src-data mkdir -p /go/pkg /build
+            docker cp . src-data:/build
             cp -r /go/pkg/mod .
             docker cp /go/pkg/mod src-data:/go/pkg/mod
             docker commit src-data src-img
       - run: docker-compose -f .circleci/docker-compose.yml up -d
-      - run: docker-compose -f .circleci/docker-compose.yml run src go test -tags integration -v
+      - run: docker-compose -f .circleci/docker-compose.yml run src bash -c "(cd /build && go test -tags integration -v)"
  
   report:
     docker:
