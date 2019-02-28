@@ -44,7 +44,7 @@ jobs:
          keys:
            - ci_test-3-{{ checksum "go.mod" }}
       - run: go version
-      - run: bash -c '[ -d ~/gomod ] && sudo mv ~/gomod $GOPATH/pkg/mod'
+      - run: bash -c '[ -d ~/gomod ] && sudo mkdir $GOPATH/pkg && sudo mv ~/gomod $GOPATH/pkg/mod'
       - run: go test
       - run: go build
       - run: docker-compose -f .circleci/docker-compose.yml up -d
