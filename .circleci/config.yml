@@ -6,9 +6,9 @@ jobs:
      - image: circleci/golang
     steps:
       - checkout
-      - restore_cache:
-         keys:
-           - ci_test-4-{{ checksum "go.mod" }}
+      # - restore_cache:
+      #    keys:
+      #      - ci_test-4-{{ checksum "go.mod" }}
       - run: mkdir -p ~/gopath
       - run: GOPATH=~/gopath go build
       - setup_remote_docker
@@ -69,6 +69,9 @@ workflows:
           filters:
             tags:
               only: /.*/
+            branches:
+              only:
+                - master
       - build:
           filters:
             tags:
