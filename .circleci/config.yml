@@ -38,6 +38,7 @@ jobs:
       image: circleci/classic:201808-01
     steps:
       - checkout
+      - run: sudo -i
       - restore_cache:
          keys:
            - ci_test-{{ checksum "go.mod" }}
