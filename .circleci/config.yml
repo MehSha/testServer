@@ -65,6 +65,9 @@ workflows:
       - report
       - build
       - push:
+          filters:
+            tags:
+              only: /.*/
           context: tokens
           requires:
             - test
