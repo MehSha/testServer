@@ -9,7 +9,6 @@ jobs:
       - restore_cache:
          keys:
            - ci_test-3-{{ checksum "go.mod" }}
-      - run: 
       - run: go build
       - setup_remote_docker
       - run: docker build -t mehryaar/testserver -f /tmp/workspace/.circleci/Dockerfile /tmp/workspace/
