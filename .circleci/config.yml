@@ -85,4 +85,6 @@ workflows:
           context: tokens
           requires:
             - test
+            - build
+            - analyze
 
