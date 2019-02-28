@@ -36,7 +36,7 @@ jobs:
   
   test:
     machine:
-      image: circleci/classic:201808-01
+      image: circleci/classic:201902-01
     steps:
       - checkout
       - run: sudo circleci-install golang 1.11
