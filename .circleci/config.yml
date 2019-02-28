@@ -8,8 +8,9 @@ jobs:
       - checkout
       - restore_cache:
          keys:
-           - ci_test-3-{{ checksum "go.mod" }}
-      - run: mkdir ~/gopath
+           - ci_test-4-{{ checksum "go.mod" }}
+      - run: mkdir -p ~/gopath
+      - run: ls ~/gopath
       - run: GOPATH=~/gopath go build
       - run: ls ~/gopath
       - setup_remote_docker
@@ -19,11 +20,10 @@ jobs:
           root: /tmp/workspace
           paths:
             - testserver.tar
-      - run: mkdir ~/gomod && cp -r /go/pkg/mod/ ~/gomod
       - save_cache:
-          key: ci_test-3-{{ checksum "go.mod" }}
+          key: ci_test-4-{{ checksum "go.mod" }}
           paths:
-            - "~/gomod"
+            - "~/gopath"
   
   push:
     docker:
@@ -44,13 +44,12 @@ jobs:
       - run: sudo circleci-install golang 1.11
       - restore_cache:
          keys:
-           - ci_test-3-{{ checksum "go.mod" }}
+           - ci_test-4-{{ checksum "go.mod" }}
       - run: go version
-      - run: bash -c '[ -d ~/gomod ] && sudo mkdir -p $GOPATH/pkg && sudo mv ~/gomod $GOPATH/pkg/mod'
-      - run: go test
-      - run: go build
+      - run: GOPATH=~/gopath go test
+      - run: GOPATH=~/gopath go build
       - run: docker-compose -f .circleci/docker-compose.yml up -d
-      - run: go test -tags integration -v
+      - run: GOPATH=~/gopath go test -tags integration -v
  
   report:
     docker:
