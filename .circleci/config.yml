@@ -61,9 +61,18 @@ workflows:
   version: 2
   all:
     jobs:
-      - test
-      - report
-      - build
+      - test:
+          filters:
+            tags:
+              only: /.*/
+      - report:
+          filters:
+            tags:
+              only: /.*/
+      - build:
+          filters:
+            tags:
+              only: /.*/
       - push:
           filters:
             branches:
