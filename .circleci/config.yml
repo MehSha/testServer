@@ -17,7 +17,7 @@ jobs:
           root: /tmp/workspace
           paths:
             - testserver.tar
-      - run: chmod -r 777 /go/pkg/mod
+      - run: chmod 777 -R /go/pkg/mod
       - save_cache:
           key: ci_test-2-{{ checksum "go.mod" }}
           paths:
