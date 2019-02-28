@@ -9,7 +9,9 @@ jobs:
       - restore_cache:
          keys:
            - ci_test-3-{{ checksum "go.mod" }}
+      - run: mkdir ~/gopath && export GOPATH=~/gopath
       - run: go build
+      - run: echo $GOPATH && ls $GOPATH/
       - setup_remote_docker
       - run: docker build -t mehryaar/testserver -f /tmp/workspace/.circleci/Dockerfile /tmp/workspace/
       - run: docker save mehryaar/testserver > testserver.tar
@@ -36,7 +38,7 @@ jobs:
   
   test:
     machine:
-      image: circleci/classic:201811-01
+      image: circleci/classic:201808-01
     steps:
       - checkout
       - run: sudo circleci-install golang 1.11
