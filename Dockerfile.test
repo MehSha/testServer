@@ -1,9 +1,0 @@
-#BUILDER
-FROM golang as builder 
-RUN apt update && apt install -y ca-certificates vim curl
-
-WORKDIR /build
-add . /build
-RUN go build
-RUN chmod +x ci_test && cp ci_test /usr/local/bin/
-CMD /usr/local/bin/ci_test
