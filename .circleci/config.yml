@@ -39,6 +39,7 @@ jobs:
       image: circleci/classic:201808-01
     steps:
       - checkout
+      - sudo circleci-install golang 1.11
       - restore_cache:
          keys:
            - ci_test-2-{{ checksum "go.mod" }}
