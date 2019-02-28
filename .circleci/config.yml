@@ -44,7 +44,8 @@ jobs:
          keys:
            - ci_test-4-{{ checksum "go.mod" }}
       - run: go version
-      - run: GOPATH=~/gopath go test
+      - run: ls ~/gopath
+      - run: GOPATH=~/gopath go test -v
       - run: GOPATH=~/gopath go build
       - run: docker-compose -f .circleci/docker-compose.yml up -d
       - run: GOPATH=~/gopath go test -tags integration -v
