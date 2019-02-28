@@ -23,6 +23,8 @@ jobs:
           paths:
             - "~/gopath"
   
+  
+  
   test:
     machine:
       image: circleci/classic:201808-01
@@ -32,8 +34,8 @@ jobs:
       - restore_cache:
          keys:
            - ci_test_{{ checksum "go.mod" }}
+      - run: GOPATH=~/gopath go build
       - run: GOPATH=~/gopath go test -v
-      # run integration tests
       - run: docker-compose -f .circleci/docker-compose.yml up -d
       - run: GOPATH=~/gopath go test -tags integration -v
 
