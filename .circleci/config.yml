@@ -8,7 +8,7 @@ jobs:
       - checkout
       - restore_cache:
          keys:
-           - ci_test-4-{{ checksum "go.mod" }}
+           - ci_test_{{ checksum "go.mod" }}
       - run: mkdir -p ~/gopath
       - run: GOPATH=~/gopath go build
       - setup_remote_docker
@@ -19,7 +19,7 @@ jobs:
           paths:
             - testserver.tar
       - save_cache:
-          key: ci_test-4-{{ checksum "go.mod" }}
+          key: ci_test_{{ checksum "go.mod" }}
           paths:
             - "~/gopath"
   
@@ -42,7 +42,7 @@ jobs:
       - checkout
       - restore_cache:
          keys:
-           - ci_test-4-{{ checksum "go.mod" }}
+           - ci_test_{{ checksum "go.mod" }}
       - run: go version
       - run: ls ~/gopath/pkg
       - run: GOPATH=~/gopath go build
@@ -50,12 +50,12 @@ jobs:
       - run: docker-compose -f .circleci/docker-compose.yml up -d
       - run: GOPATH=~/gopath go test -tags integration -v
  
-  report:
+  analyze:
     docker:
-     - image: mehryaar/runner_sloc
+     - image: mehryaar/go-analyze
     steps:
       - checkout
-      - run: /go/bin/sloc .
+      - run: go-analyze.sh .
 
 workflows:
   version: 2
@@ -65,7 +65,7 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - report:
+      - analyze:
           filters:
             tags:
               only: /.*/
