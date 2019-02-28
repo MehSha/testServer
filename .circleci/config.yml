@@ -34,29 +34,18 @@ jobs:
       - run: docker push mehryaar/testserver
   
   test:
-    docker:
-     - image: foodora/golang
+    machine:
+      image: circleci/classic:201808-01
     steps:
       - checkout
       - restore_cache:
          keys:
            - ci_test-{{ checksum "go.mod" }}
-      - run: go vet
+      - run: go version
       - run: go test
       - run: go build
-      - setup_remote_docker
-      - run:
-          name: build source image to run tests from
-          command: |
-            set -x
-            docker run -d --name src-data golang sleep infinity
-            docker exec -d src-data mkdir -p /go/pkg /build
-            docker cp . src-data:/build
-            cp -r /go/pkg/mod .
-            docker cp /go/pkg/mod src-data:/go/pkg/mod
-            docker commit src-data src-img
       - run: docker-compose -f .circleci/docker-compose.yml up -d
-      - run: docker-compose -f .circleci/docker-compose.yml run src bash -c "(cd /build && go test -tags integration -v)"
+      - run: go test -tags integration -v
  
   report:
     docker:

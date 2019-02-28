@@ -21,14 +21,14 @@ services:
       POSTGRES_PASSWORD: postgres
     depends_on:
       - db
-  src:
-    image: src-img
-    environment:
-      POSTGRES_HOST: db
-      POSTGRES_DB: test
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      APP_URL: app
-    depends_on:
-      - db
-      - app
+  # src:
+  #   image: src-img
+  #   environment:
+  #     POSTGRES_HOST: db
+  #     POSTGRES_DB: test
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     APP_URL: app
+  #   depends_on:
+  #     - db
+  #     - app
