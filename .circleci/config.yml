@@ -8,7 +8,7 @@ jobs:
       - checkout
       - restore_cache:
          keys:
-           - ci_test-{{ checksum "go.mod" }}
+           - ci_test-2-{{ checksum "go.mod" }}
       - run: go build
       - setup_remote_docker
       - run: docker build -t mehryaar/testserver -f /tmp/workspace/.circleci/Dockerfile /tmp/workspace/
@@ -17,8 +17,9 @@ jobs:
           root: /tmp/workspace
           paths:
             - testserver.tar
+      - run: chmod -r 777 /go/pkg/mod
       - save_cache:
-          key: ci_test-{{ checksum "go.mod" }}
+          key: ci_test-2-{{ checksum "go.mod" }}
           paths:
             - "/go/pkg/mod/"
   
@@ -38,10 +39,9 @@ jobs:
       image: circleci/classic:201808-01
     steps:
       - checkout
-      - run: sudo su root
       - restore_cache:
          keys:
-           - ci_test-{{ checksum "go.mod" }}
+           - ci_test-2-{{ checksum "go.mod" }}
       - run: go version
       - run: go test
       - run: go build
