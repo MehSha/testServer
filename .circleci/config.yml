@@ -23,6 +23,20 @@ jobs:
           paths:
             - "~/gopath"
   
+  test:
+    machine:
+      image: circleci/classic:201808-01
+    steps:
+      - run: sudo rm -Rf /usr/local/go && sudo circleci-install golang 1.11
+      - checkout
+      - restore_cache:
+         keys:
+           - ci_test_{{ checksum "go.mod" }}
+      - run: GOPATH=~/gopath go test -v
+      # run integration tests
+      - run: docker-compose -f .circleci/docker-compose.yml up -d
+      - run: GOPATH=~/gopath go test -tags integration -v
+
   push:
     docker:
      - image: circleci/golang
@@ -33,22 +47,6 @@ jobs:
       - run: docker load <  /tmp/workspace/testserver.tar
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: docker push mehryaar/testserver
-  
-  test:
-    machine:
-      image: circleci/classic:201808-01
-    steps:
-      - run: sudo rm -Rf /usr/local/go && sudo circleci-install golang 1.11
-      - checkout
-      - restore_cache:
-         keys:
-           - ci_test_{{ checksum "go.mod" }}
-      - run: go version
-      - run: ls ~/gopath/pkg
-      - run: GOPATH=~/gopath go build
-      - run: GOPATH=~/gopath go test -v
-      - run: docker-compose -f .circleci/docker-compose.yml up -d
-      - run: GOPATH=~/gopath go test -tags integration -v
  
   analyze:
     docker:
