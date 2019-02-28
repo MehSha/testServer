@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 FROM debian
 RUN apt update  && apt install -y ca-certificates
 
@@ -9,6 +10,11 @@ RUN chmod +x /tini
 ENTRYPOINT ["/tini", "--"]
 
 #copy 
+=======
+FROM foodora/debian
+
+#copy
+>>>>>>> fullcompose
 ADD ci_test /usr/local/bin/ci_test
 RUN chmod +x /usr/local/bin/ci_test
 CMD /usr/local/bin/ci_test

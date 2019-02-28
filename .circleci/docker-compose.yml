@@ -2,7 +2,6 @@ version: '3'
 services:
   db:
     image: postgres
-    network_mode: host
     environment:
       POSTGRES_DB: test
       POSTGRES_USER: postgres
@@ -10,7 +9,6 @@ services:
     ports:
       - 5432:5432
   app:
-    network_mode: host
     build:
       context: ../
       dockerfile: .circleci/Dockerfile
@@ -23,16 +21,3 @@ services:
       POSTGRES_PASSWORD: postgres
     depends_on:
       - db
-  # src:
-  #   build:
-  #     context: ../
-  #     dockerfile: .circleci/DockerfileSrc
-  #   environment:
-  #     POSTGRES_HOST: db
-  #     POSTGRES_DB: test
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #     APP_URL: app
-  #   depends_on:
-  #     - db
-  #     - app

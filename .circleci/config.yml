@@ -8,8 +8,9 @@ jobs:
       - checkout
       - restore_cache:
          keys:
-           - ci_test-{{ checksum "go.mod" }}
-      - run: go build
+           - ci_test_{{ checksum "go.mod" }}
+      - run: mkdir -p ~/gopath
+      - run: GOPATH=~/gopath go build
       - setup_remote_docker
       - run: docker build -t mehryaar/testserver -f /tmp/workspace/.circleci/Dockerfile /tmp/workspace/
       - run: docker save mehryaar/testserver > testserver.tar
@@ -18,9 +19,9 @@ jobs:
           paths:
             - testserver.tar
       - save_cache:
-          key: ci_test-{{ checksum "go.mod" }}
+          key: ci_test_{{ checksum "go.mod" }}
           paths:
-            - "$GOPATH/pkg/mod/"
+            - "~/gopath"
   
   push:
     docker:
@@ -34,39 +35,53 @@ jobs:
       - run: docker push mehryaar/testserver
   
   test:
-    machine: true
+    machine:
+      image: circleci/classic:201808-01
     steps:
-      - run: sudo circleci-install golang 1.11.2
-      - run: sudo mkdir ~/gopath
+      - run: sudo rm -Rf /usr/local/go && sudo circleci-install golang 1.11
       - checkout
-      # - restore_cache:
-      #    keys:
-      #      - ci_test-{{ checksum "go.mod" }}
-      - run: go build
-      - run: go vet
-      # - setup_remote_docker
+      - restore_cache:
+         keys:
+           - ci_test_{{ checksum "go.mod" }}
+      - run: go version
+      - run: ls ~/gopath/pkg
+      - run: GOPATH=~/gopath go build
+      - run: GOPATH=~/gopath go test -v
       - run: docker-compose -f .circleci/docker-compose.yml up -d
-      - run: go test -tags integration -v
-      # - run: docker-compose -f .circleci/docker-compose.yml run src go test -tags integration -v
-      # - run: docker-compose -f .circleci/docker-compose.yml down 
+      - run: GOPATH=~/gopath go test -tags integration -v
  
-  report:
+  analyze:
     docker:
-     - image: mehryaar/runner_sloc
+     - image: mehryaar/go-analyze
     steps:
       - checkout
-      - run: /go/bin/sloc .
+      - run: go-analyze.sh .
 
 workflows:
   version: 2
   all:
     jobs:
-      - build
-      - report
       - test:
-          requires:
-            - build
+          filters:
+            tags:
+              only: /.*/
+      - analyze:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only:
+                - master
+      - build:
+          filters:
+            tags:
+              only: /.*/
       - push:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
           context: tokens
           requires:
             - test
