@@ -66,8 +66,10 @@ workflows:
       - build
       - push:
           filters:
+            branches:
+              ignore: /.*/
             tags:
-              only: /.*/
+              only: /^v.*/
           context: tokens
           requires:
             - test
