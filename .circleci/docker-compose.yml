@@ -8,6 +8,10 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - 5432:5432
+  svc1:
+    build: ../mock/svc1
+    ports:
+      - "8090:8090"
   app:
     build:
       context: ../
