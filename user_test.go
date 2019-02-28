@@ -3,6 +3,7 @@
 package main
 
 import (
+	"net/http"
 	"testing"
 )
 
@@ -24,4 +25,11 @@ func TestAddUser(t *testing.T) {
 		return
 	}
 
+}
+
+func TestSVC1Integration(t *testing.T) {
+	_, err := http.Get("http://127.0.0.1:8090/")
+	if err != nil {
+		t.Errorf("integration with SVC1 failed: %s", err)
+	}
 }
