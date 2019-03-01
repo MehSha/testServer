@@ -21,3 +21,10 @@ func initUser(db *sqlx.DB) {
 		log.Fatalln(err)
 	}
 }
+
+func AddUser(id, name string) (string, error) {
+	return userDAM.Insert(User{
+		ID:   id,
+		Name: name,
+	})
+}

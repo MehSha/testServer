@@ -12,10 +12,7 @@ func TestAddUser(t *testing.T) {
 	db := connectDB()
 	defer db.Close()
 	initUser(db)
-	id, err := userDAM.Insert(User{
-		ID:   "ID1",
-		Name: "Mahdi",
-	})
+	id, err := AddUser("ID1", "Mahdi")
 	if err != nil {
 		t.Errorf("can not add user: %s", err)
 		return
