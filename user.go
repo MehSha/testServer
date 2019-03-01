@@ -22,6 +22,7 @@ func initUser(db *sqlx.DB) {
 	}
 }
 
+//this is a function
 func AddUser(id, name string) (string, error) {
 	return userDAM.Insert(User{
 		ID:   id,
